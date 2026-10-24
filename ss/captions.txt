@@ -1,0 +1,16 @@
+01-alpes-via-lactea.jpg=Via Láctea · Monte Rainier, EUA
+02-estacao-espacial-rastros-de-estrelas.jpg=Rastros de estrelas · Estação Espacial Internacional
+03-aurora-nos-alpes-de-lyngen.jpg=Aurora boreal · Alpes de Lyngen, Noruega
+04-aurora-austral-vista-do-espaco.jpg=Aurora austral · vista do espaço
+05-sob-a-via-lactea.jpg=Sob a Via Láctea
+06-java-a-noite-vista-do-espaco.jpg=Java à noite · vista do espaço
+07-geleira-sob-as-estrelas.jpg=Geleira sob as estrelas · Alpes suíços
+08-nova-york-vista-do-espaco.jpg=Nova York à noite · vista do espaço
+09-rastros-de-estrelas.jpg=Rastros de estrelas · Rishikesh, Índia
+10-aurora-sobre-a-antartida.jpg=Aurora austral sobre a Antártida
+11-via-lactea-sobre-o-lago.jpg=Via Láctea · Bontecou Lake, Nova York
+12-europa-a-noite-vista-do-espaco.jpg=Europa à noite · vista do espaço
+13-aurora-e-perseidas.jpg=Aurora e Perseidas
+14-lua-sobre-a-malasia.jpg=Lua sobre a Malásia · vista do espaço
+15-llyn-ogwen.jpg=Via Láctea · Llyn Ogwen, País de Gales
+16-aurora-boreal.jpg=Aurora boreal · Estônia

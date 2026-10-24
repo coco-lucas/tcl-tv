@@ -1,0 +1,9 @@
+00-noite-estrelada.jpg=Via Láctea sobre o lago
+01-alpes-via-lactea.jpg=Monte Rainier
+02-geleira-noturna.jpg=Geleira noturna
+03-marmolada.jpg=Marmolada
+04-lofoten.jpg=Lofoten
+05-dunas.jpg=Dunas
+06-el-capitan.jpg=El Capitan
+07-aurora.jpg=Aurora boreal
+08-llyn-ogwen.jpg=Llyn Ogwen
