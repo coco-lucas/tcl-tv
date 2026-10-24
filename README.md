@@ -27,6 +27,7 @@ Tudo é feito por ADB pelo Wi‑Fi, sem root, e é reversível: cada mudança no
 | `QuickActivity` | Painel rápido que desliza da direita, por cima de qualquer app |
 | `RemoteKeys` | Serviço de acessibilidade que dá destino aos botões do controle |
 | `Open` | Abrir apps, entradas HDMI e telas de ajustes |
+| `Previews` | Destaque ao focar um app: em alta via TMDB e imagem ao vivo da HDMI |
 | `Screensaver` | Screensaver de fotos noturnas (instalado, mas desligado) |
 
 ## Como instalar
@@ -61,6 +62,15 @@ adb shell appops set com.ansub.tvhome AUTO_START allow
 adb shell settings put secure enabled_accessibility_services com.ansub.tvhome/com.ansub.tvhome.RemoteKeys
 adb shell settings put secure accessibility_enabled 1
 ```
+
+Previews ao focar um app no dock:
+
+```sh
+adb push inputs.txt $D/              # nome do aparelho por entrada (ex.: HW16=Xbox) e logo em logos/<nome>.png
+adb push <arquivo-com-token> $D/tmdb.txt   # token ou chave da TMDB; fica só na TV
+```
+
+Netflix, Prime Video e Disney+ mostram o que está em alta no Brasil via TMDB; a entrada HDMI mostra a imagem ao vivo do aparelho.
 
 A foto do perfil (pílula do topo) é um `profile.png` em `$D/`, e não fica no repositório.
 

@@ -55,7 +55,7 @@ final class Previews {
         SERVICE_NAMES.put("com.disney.disneyplus", "Disney+");
     }
 
-    private static final int SETTLE_MS = 350, FADE_MS = 500, SLIDE_MS = 12000, CROSS_MS = 1200;
+    private static final int SETTLE_MS = 350, FADE_MS = 500, SLIDE_MS = 10000, CROSS_MS = 1200;
     private static final int LIVE_IN_MS = 450, LIVE_OUT_MS = 220, ART_OUT_MS = 300;
     private static final long REFRESH_MS = 30 * 60_000;
     private static final PathInterpolator EASE = new PathInterpolator(0.42f, 0f, 0.58f, 1f);
@@ -67,6 +67,7 @@ final class Previews {
     private FrameLayout host;
     private ImageView[] art;
     private TextView name, detail;
+    private ImageView liveLogo;
     private TvView live;
     private FrameLayout liveFrame;
     private ImageView liveCover;
@@ -95,6 +96,10 @@ final class Previews {
         name.setSingleLine(true);
         detail = a.text(a.px(26), 0xCCFFFFFF, MainActivity.regular);
         detail.setSingleLine(true);
+        liveLogo = new ImageView(a);
+        liveLogo.setScaleType(ImageView.ScaleType.FIT_START);
+        liveLogo.setAlpha(0f);
+        host.addView(liveLogo, MainActivity.at(a.px(96), height - a.px(340), a.px(300), a.px(64)));
         host.addView(name, MainActivity.at(a.px(96), height - a.px(250), width - a.px(192), -2));
         host.addView(detail, MainActivity.at(a.px(96), height - a.px(170), width - a.px(192), -2));
         root.addView(host, 0, new FrameLayout.LayoutParams(width, height));
@@ -158,7 +163,7 @@ final class Previews {
 
     private void startLive(final String inputId) {
         boolean artShowing = art[0].getAlpha() > 0.01f || art[1].getAlpha() > 0.01f;
-        for (ImageView v : art) v.animate().alpha(0f).setDuration(ART_OUT_MS).setInterpolator(EASE).start();
+        for (ImageView v : art) v.animate().alpha(0f).setStartDelay(0).setDuration(ART_OUT_MS).setInterpolator(EASE).start();
         for (View tv : new View[] {name, detail}) tv.animate().alpha(0f).setDuration(ART_OUT_MS).setInterpolator(EASE).start();
         if (artShowing) {
             ui.postDelayed(() -> {
@@ -190,13 +195,24 @@ final class Previews {
         });
         host.addView(liveFrame, 2, MainActivity.at(x, y, w, h));
 
-        name.setText(a.inputName(inputId));
-        detail.setText("Ao vivo");
-        for (View tv : new View[] {name, detail}) {
+        String port = a.inputName(inputId);
+        String device = alias(inputId);
+        name.setText(device != null ? device : port);
+        android.graphics.drawable.Drawable logo = device == null ? null : logo(device);
+        liveLogo.setImageDrawable(logo);
+        android.media.tv.TvInputManager tim = (android.media.tv.TvInputManager) a.getSystemService(android.content.Context.TV_INPUT_SERVICE);
+        boolean on = tim != null && tim.getInputState(inputId) == android.media.tv.TvInputManager.INPUT_STATE_CONNECTED;
+        android.text.SpannableString state = new android.text.SpannableString("●  " + (on ? "Conectado" : "Sem sinal")
+                + (device != null ? " · " + port : ""));
+        state.setSpan(new android.text.style.ForegroundColorSpan(on ? 0xFF5BD47A : 0x80FFFFFF), 0, 1, 0);
+        detail.setText(state);
+        for (View tv : logo != null ? new View[] {liveLogo, name, detail} : new View[] {name, detail}) {
             tv.animate().cancel();
             tv.setAlpha(0f);
             tv.setTranslationY(a.px(12));
         }
+        if (logo != null)
+            liveLogo.animate().alpha(1f).translationY(0).setStartDelay(60).setDuration(FADE_MS).setInterpolator(EASE).start();
         name.animate().alpha(1f).translationY(0).setStartDelay(120).setDuration(FADE_MS).setInterpolator(EASE).start();
         detail.animate().alpha(1f).translationY(0).setStartDelay(180).setDuration(FADE_MS).setInterpolator(EASE).start();
         host.animate().cancel();
@@ -210,7 +226,7 @@ final class Previews {
             return;
         }
         stopping = true;
-        for (View tv : new View[] {name, detail}) {
+        for (View tv : new View[] {liveLogo, name, detail}) {
             tv.animate().cancel();
             tv.animate().alpha(0f).setStartDelay(0).setDuration(LIVE_OUT_MS).setInterpolator(EASE).start();
         }
@@ -232,6 +248,21 @@ final class Previews {
         }
         cover.animate().cancel();
         cover.animate().alpha(1f).setDuration(LIVE_OUT_MS).setInterpolator(EASE).withEndAction(done).start();
+    }
+
+    private String alias(String inputId) {
+        String id = inputId.substring(inputId.lastIndexOf('/') + 1);
+        String name = MainActivity.names(new File(a.getExternalFilesDir(null), "inputs.txt")).get(id);
+        return name == null || name.isEmpty() ? null : name;
+    }
+
+    private android.graphics.drawable.Drawable logo(String device) {
+        File f = new File(a.getExternalFilesDir("logos"), device.toLowerCase(java.util.Locale.ROOT) + ".png");
+        Bitmap b = f.exists() ? BitmapFactory.decodeFile(f.getPath()) : null;
+        if (b == null) return null;
+        android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(a.getResources(), b);
+        d.setColorFilter(new android.graphics.PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+        return d;
     }
 
     private Bitmap backdrop(int x, int y, int w, int h) {
@@ -312,8 +343,11 @@ final class Previews {
         v.setScaleY(1f);
         host.removeView(v);
         host.addView(v, 1, new FrameLayout.LayoutParams(heroW, heroH));
-        v.animate().alpha(1f).setDuration(CROSS_MS).setInterpolator(EASE).withEndAction(() -> old.setAlpha(0f)).start();
-        v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(SLIDE_MS + CROSS_MS).setInterpolator(new LinearInterpolator()).start();
+        v.animate().alpha(1f).setStartDelay(0).setDuration(CROSS_MS).setInterpolator(EASE).start();
+        v.animate().scaleX(1.05f).scaleY(1.05f).setStartDelay(0).setDuration(SLIDE_MS + CROSS_MS)
+                .setInterpolator(new LinearInterpolator()).start();
+        old.animate().alpha(0f).setStartDelay(CROSS_MS * 2 / 5).setDuration(CROSS_MS * 3 / 5).setInterpolator(EASE).start();
+        liveLogo.animate().alpha(0f).setStartDelay(0).setDuration(FADE_MS / 2).start();
         for (View tv : new View[] {name, detail}) {
             tv.animate().cancel();
             tv.setAlpha(0f);
