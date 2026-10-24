@@ -1,0 +1,47 @@
+off com.tcl.channelplus
+off com.tcl.waterfall.overseas
+off com.tcl.messagebox
+off com.tcl.esticker
+off com.tcl.exhibit
+off com.tcl.usercenter
+off com.tcl.logkit
+off com.tcl.smartalexa
+off com.tcl.ocean.instructions
+off com.tcl.repairguide
+off com.google.android.play.games
+off com.google.android.videos
+off com.google.android.youtube.tvmusic
+off com.google.android.feedback
+off com.android.tv.feedbackconsent
+off com.cbs.ca
+off com.spotify.tv.android
+off com.wbd.stream
+# uninstalled com.overdevs.at4k (reinstall via Play Store)
+# uninstalled br.com.intelbras.mibocam (reinstall via Play Store)
+# uninstalled br.com.claro.now.smarttvclient (reinstall via Play Store)
+# uninstalled com.globo.globotv (reinstall via Play Store)
+global window_animation_scale 0.5
+global transition_animation_scale 0.5
+global animator_duration_scale 1.0  # back to 1.0: the launcher sets its own short durations
+off com.google.android.apps.tv.launcherx
+off com.google.android.tungsten.setupwraith
+# installed com.ansub.tvhome (undo: sh undo.sh 192.168.1.8:5555)
+secure screensaver_components com.neilturner.aerialviews/.ui.screensaver.DreamActivity  # was com.google.android.apps.tv.dreamx/.service.Backdrop
+off com.google.android.apps.tv.dreamx
+# launcher files (undo: adb shell rm -r /sdcard/Android/data/com.ansub.tvhome)
+push logos/*.png -> /sdcard/Android/data/com.ansub.tvhome/files/logos/
+push wall/wallpaper2.jpg,wallpaper3.jpg -> /sdcard/Android/data/com.ansub.tvhome/files/wallpapers/
+push icons/*.png -> /sdcard/Android/data/com.ansub.tvhome/files/icons/ ; fonts/Inter.ttf -> /sdcard/Android/data/com.ansub.tvhome/files/fonts/
+push wall/0*.jpg -> /sdcard/Android/data/com.ansub.tvhome/files/wallpapers/ (7 files); profile.png -> /sdcard/Android/data/com.ansub.tvhome/files/ (GitHub avatar)
+push wall/00-noite-estrelada.jpg, 08-llyn-ogwen.jpg -> /sdcard/Android/data/com.ansub.tvhome/files/wallpapers/ (default: 00)
+secure screensaver_components com.ansub.tvhome/.Screensaver  # was Aerial Views (com.neilturner.aerialviews/.ui.screensaver.DreamActivity)
+push ss/*.jpg + captions.txt -> /sdcard/Android/data/com.ansub.tvhome/files/screensaver/
+secure screensaver_components com.neilturner.aerialviews/.ui.screensaver.DreamActivity  # back to Aerial Views; com.ansub.tvhome/.Screensaver stays installed as an option
+accessibility: enabled_accessibility_services=com.ansub.tvhome/com.ansub.tvhome.RemoteKeys, accessibility_enabled=1 (was empty/0; undo: settings put secure accessibility_enabled 0)
+off tv.mopa.ginga  # interactive digital-TV middleware
+# compiled com.ansub.tvhome with -m speed (undo: cmd package compile --reset com.ansub.tvhome)
+secure match_content_frame_rate 2  # was unset (system default); 0 = never
+global private_dns_mode hostname / private_dns_specifier dns.adguard-dns.com  # undo: settings put global private_dns_mode opportunistic
+off com.tcl.dashboard  # TCL Quick Panel, replaced by com.ansub.tvhome/.QuickActivity (undo: pm enable com.tcl.dashboard)
+RemoteKeys: KEYCODE_NOTIFICATION (gear) -> Android TV Settings; 4001 (TCL guide) -> live TV unless live TV is in front; 4514 -> QuickActivity
+appops AUTO_START allow for com.ansub.tvhome and com.neilturner.aerialviews  # TCL TclAppBoot blocked rebinding the key service and the Aerial Views screensaver (undo: appops set <pkg> AUTO_START ignore)
