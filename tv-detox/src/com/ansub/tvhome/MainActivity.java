@@ -121,6 +121,7 @@ public class MainActivity extends Activity {
     private final List<View> dockCards = new ArrayList<>(), topIcons = new ArrayList<>(), panelCards = new ArrayList<>();
     private int page;
     private final InfoCards info = new InfoCards(this);
+    private final Previews previews = new Previews(this);
     private final java.util.Map<String, Grid.Item> appItems = new java.util.HashMap<>();
     Bitmap wall;
     private final List<View> tiles = new ArrayList<>();
@@ -170,7 +171,9 @@ public class MainActivity extends Activity {
         FrameLayout viewport = new FrameLayout(this);
         viewport.addView(root, new FrameLayout.LayoutParams(-1, 2 * sh));
         setContentView(viewport);
+        previews.attach(root, getResources().getDisplayMetrics().widthPixels, px(700));
         root.getViewTreeObserver().addOnGlobalFocusChangeListener((was, now) -> {
+            if (now == null || !dockCards.contains(now)) previews.hide();
             if (now != null && now.getTag() instanceof String)
                 showPage(((String) now.getTag()).startsWith(PANEL) ? 1 : 0);
         });
@@ -261,6 +264,7 @@ public class MainActivity extends Activity {
         }
         refreshNetwork();
         info.refresh();
+        previews.prefetch();
         View f = getCurrentFocus();
         if (f == null && !tiles.isEmpty()) tiles.get(0).requestFocus();
     }
@@ -505,6 +509,7 @@ public class MainActivity extends Activity {
             if (has) {
                 focusedKey = key;
                 markFocus(rowApps.contains(key) ? rowApps.indexOf(key) : index, name);
+                previews.focus(key);
             }
             focus(v, has);
         });
@@ -733,6 +738,17 @@ public class MainActivity extends Activity {
     }
 
     View launchFrom;
+
+    String inputName(String id) {
+        for (TvInputInfo in : Open.hdmiInputs(this, 8)) if (in.getId().equals(id)) return Open.inputLabel(this, in);
+        return "HDMI";
+    }
+
+    @Override
+    protected void onPause() {
+        previews.stop();
+        super.onPause();
+    }
 
     private void open(String key) {
         Intent i;
