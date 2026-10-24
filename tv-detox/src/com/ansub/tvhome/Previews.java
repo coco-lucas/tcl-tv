@@ -55,7 +55,7 @@ final class Previews {
         SERVICE_NAMES.put("com.disney.disneyplus", "Disney+");
     }
 
-    private static final int SETTLE_MS = 350, FADE_MS = 500, SLIDE_MS = 7000, CROSS_MS = 900;
+    private static final int SETTLE_MS = 350, FADE_MS = 500, SLIDE_MS = 12000, CROSS_MS = 1200;
     private static final int LIVE_IN_MS = 450, LIVE_OUT_MS = 220, ART_OUT_MS = 300;
     private static final long REFRESH_MS = 30 * 60_000;
     private static final PathInterpolator EASE = new PathInterpolator(0.42f, 0f, 0.58f, 1f);
@@ -267,6 +267,21 @@ final class Previews {
     private void startSlides(String key) {
         loop++;
         slide = 0;
+        if (host.getAlpha() < 0.99f) {
+            for (ImageView v : art) {
+                v.animate().cancel();
+                v.setImageDrawable(null);
+                v.setAlpha(0f);
+                v.setScaleX(1f);
+                v.setScaleY(1f);
+            }
+            for (View tv : new View[] {name, detail}) {
+                tv.animate().cancel();
+                tv.setAlpha(0f);
+            }
+            host.animate().cancel();
+            host.setAlpha(1f);
+        }
         nextSlide(key, loop);
     }
 
