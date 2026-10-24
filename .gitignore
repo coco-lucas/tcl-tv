@@ -1,0 +1,19 @@
+# personal / private
+/backup/
+/profile.png
+tv-detox/key.jks
+*.jks
+
+# build output
+tv-detox/out/
+
+# test screenshots, recordings and old copies
+/*.png
+/*.mp4
+/*.java
+/src.before-cleanup/
+/.upstream-tv-detox.git/
+
+.DS_Store
+/top.txt
+/tv-changes-mem-before.txt
